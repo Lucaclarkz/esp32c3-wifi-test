@@ -1,0 +1,28 @@
+name: Compile ESP32-C3 Firmware
+
+on: [push, pull_request]
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup Arduino CLI
+        uses: arduino/setup-arduino-cli@v1
+
+      - name: Install ESP32 Platform
+        run: |
+          arduino-cli core update-index --additional-urls https://espressif.github.io/arduino-esp32/package_esp32_index.json
+          arduino-cli core install esp32:esp32 --additional-urls https://espressif.github.io/arduino-esp32/package_esp32_index.json
+
+      - name: Compile Sketch to BIN
+        run: |
+          arduino-cli compile --fqbn esp32:esp32:esp32c3 --output-dir ./build ./wifi_ap_test/wifi_ap_test.ino
+
+      - name: Upload Binary Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: esp32c3-binaries
+          path: ./build/
