@@ -7,10 +7,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Arduino CLI
-        uses: arduino/setup-arduino-cli@v1
+        uses: arduino/setup-arduino-cli@v2
 
       - name: Install ESP32 Platform
         run: |
@@ -19,10 +19,11 @@ jobs:
 
       - name: Compile Sketch to BIN
         run: |
-          arduino-cli compile --fqbn esp32:esp32:esp32c3 --output-dir ./build ./wifi_ap_test/wifi_ap_test.ino
+          # --export-binaries ထည့်ပေးထားလို့ Flash ဖိုင်အပြည့်စုံစုံလင်လင် ထွက်လာမှာဖြစ်ပါတယ်
+          arduino-cli compile --fqbn esp32:esp32:esp32c3 --export-binaries --output-dir ./build ./wifi_ap_test/wifi_ap_test.ino
 
       - name: Upload Binary Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4 # <- ဒီနေရာကို v4 ပြောင်းလိုက်လို့ error ရှင်းသွားပါလိမ့်မယ်
         with:
           name: esp32c3-binaries
           path: ./build/
